@@ -1,0 +1,6 @@
+[submodule "ServerFeatures/WordEmbedding/fastText"]
+	path = ServerFeatures/WordEmbedding/fastText
+	url  = https://github.com/facebookresearch/fastText.git
+[submodule "ServerFeatures/Processing/wmd"]
+	path = ServerFeatures/Processing/wmd
+	url  = https://github.com/moxplayer/wmd.git
