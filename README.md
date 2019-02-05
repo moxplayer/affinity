@@ -11,10 +11,24 @@ workign as a reverse proxy, together with the duo Gunicorn and Flask running the
 git clone https://github.com/moxplayer/affinity.git
 cd affinity
 
-1a. get submodules
+1a. Initialize Submodules
+git submodule init
 
-1b. 
+1b. Update Submodules
+git submodule update
 
+1c. Make the WMD
+sudo apt install python-tk
+cd ServerFeatures/Processing/wmd/python-emd-master
+make
+cd ../../../..
+
+1d. Make fastText
+
+cd ServerFeatures/WordEmbedding/fastText
+make
+python -m pip install .
+cd ../../..
 
 
 2. Install pip
