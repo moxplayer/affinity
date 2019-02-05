@@ -1,0 +1,40 @@
+# all compiled python files
+*.pyc
+# all  text files
+*.txt
+# virtual environment stuff
+**/affinity_venv
+
+# all log files
+*.log
+
+# all json files
+*.json
+
+# any binary model
+*.bin
+
+# any vector model
+*.vec
+
+# any corpus
+*.xml
+
+#any image
+*.png
+
+# probably also the __pycache__ stuff (find out about it)
+**/__pycache__
+
+# the temporal corpus [located in ServerFeatures Userdata]
+temp_corpus
+
+# all pickle files
+*.pk
+
+# special files for development
+recalculationdaemon.py
+
+# similarity files
+*.csv
+
