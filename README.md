@@ -20,26 +20,25 @@ The data sets used in the paper can be downloaded [here](some_link).
 **Support for Python3 is not there - string/byte encoding will arise in combination with database interactions.**
 
 0. Preliminaries
- 
+
+```
 sudo apt update
-
 sudo apt upgrade
-
 sudo apt install vim
-
 sudo apt install curl
-
 sudo apt install git
-
 sudo apt install python python-pip
+```
 
 1. Clone the repository
-
+```
 git clone https://github.com/moxplayer/affinity.git
 cd affinity
-
+```
 2. Initialize Submodules
+```
 git submodule init
+```
 
 3. Update Submodules
 git submodule update
