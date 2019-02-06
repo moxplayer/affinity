@@ -15,7 +15,7 @@ Whenever you use affinity, please cite the following paper (preprint) to be publ
 }
 ```
 
-The data sets used in the paper can be downloaded [here](some_link).
+The data sets used in the paper can be downloaded [here](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FNMT4HP&version=DRAFT).
 
 
 **We have tested the soundnedd of the *affinity* prototype on an Ubuntu 16.04 virtual machine using Python2 (simply *python* in the below).**
@@ -66,7 +66,7 @@ cd ../../..
 
 3. Install virtual_env
 ```
-python - m pip install virtualenv
+python -m pip install virtualenv
 ```
 
 5. Create a virtual environment
@@ -208,7 +208,7 @@ USE FBUserData;
 
 22. Set the 4 byte unicode symbol support and their standard collation (the colation will be able to be adjusted within the application)
 ```
-CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ALTER DATABASE CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 23. Create three tables
@@ -228,6 +228,10 @@ SHOW TABLE STATUS;
 ```
 \q
 ```
+
+
+
+## Download data sets
 
 
 
