@@ -1,38 +1,61 @@
-###Deployment Instructions for affinity
+### Deployment Instructions for affinity
 
 The affinity system is a Web application running on the Web Server software nginx,
 workign as a reverse proxy, together with the duo Gunicorn and Flask running the application (server).
 
-**We have run this prototype on an Ubuntu 16.04 virtual machine using Python2.**
+Whenever you use affinity, please cite the following paper (preprint) to be published by IEEE:
+
+@unpublished{Eichinger2019,
+	author	= {Eichinger, Tobias and Beierle, Felix and Khan, Sumsam Ullah and Middelanis, Robin and Sekar, Veeraraghavan and Tabibzadeh, Sam},
+	title	= {affinity: A System for Latent User Similarity Comparison on Texting Data},
+	booktitle = {IEEE-ICC},
+	journal={arXiv preprint},
+	year 	= {2019},
+}
+
+The data sets used in the paper can be downloaded [here](some_link).
+
+
+**We have tested the soundnedd of the *affinity* prototype on an Ubuntu 16.04 virtual machine using Python2 (simply *python* in the below).**
 **Support for Python3 is not there - string/byte encoding will arise in combination with database interactions.**
+
+0. Preliminaries
+ 
+sudo apt update
+
+sudo apt upgrade
+
+sudo apt install vim
+
+sudo apt install curl
+
+sudo apt install git
+
+sudo apt install python python-pip
 
 1. Clone the repository
 
 git clone https://github.com/moxplayer/affinity.git
 cd affinity
 
-1a. Initialize Submodules
+2. Initialize Submodules
 git submodule init
 
-1b. Update Submodules
+3. Update Submodules
 git submodule update
 
-1c. Make the WMD
+4. Make WMD
 sudo apt install python-tk
 cd ServerFeatures/Processing/wmd/python-emd-master
 make
 cd ../../../..
 
-1d. Make fastText
+5. Make fastText
 
 cd ServerFeatures/WordEmbedding/fastText
 make
 python -m pip install .
 cd ../../..
-
-
-2. Install pip
-sudo apt install python python-pip
 
 3. Install virtual_env
 sudo pip install virtual_env
