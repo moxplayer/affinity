@@ -16,7 +16,7 @@ from prepareWMD import createPickle
 from userBoWgeneration import generateUserBoW
 
 sys.path.append('./ServerFeatures/Processing/wmd')
-from wmd_adapted import cosine_distance, euclidean_distance, get_wmd, concat_pickle, calc_similarity                                            
+from wmd_adapted import cosine_distance, euclidean_distance, calc_similarity                                            
 
 sys.path.append('./ServerFeatures/Usermanagement')
 from dbdetails import createUserDetail, populateBoWReferenceCorpus, populateUsersBoW, fetchdistinctUsercount, fetchDocumentcount, fetchUserBoW, fetchUserName, checkValidUser, fetchProcessStatus, fetchTimestamp, updateTFIDF, fetchUserId, fetchTopNtfidf, updateProcessStatus, updateMessageTimestamp, updateFBEmailid

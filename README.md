@@ -26,6 +26,7 @@ The data sets used in the paper can be downloaded [here](some_link).
 ```
 sudo apt update
 sudo apt upgrade
+sudo apt-get install python-dev
 sudo apt install vim
 sudo apt install curl
 sudo apt install git
@@ -65,17 +66,12 @@ cd ../../..
 
 3. Install virtual_env
 ```
-sudo pip install virtual_env
-```
-
-4. Create a folder for the virtual environment
-```
-mkdir affinity_venv
+python - m pip install virtualenv
 ```
 
 5. Create a virtual environment
 ```
-virtualvenv affinity_venv
+virtualenv --python=python2 affinity_venv
 ```
 
 6. Activate the virtual environment
@@ -85,21 +81,18 @@ source affinity_venv/bin/activate
 
 7. Install some python modules into the virtual environment
 ```
-pip install fbchat
-pip install scikit-learn
-pip install Flask-MySQL
-pip install numpy
-pip install scipy
-pip install gensim
-pip install pybind11
+python -m pip install fbchat
+python -m pip install scikit-learn
+python -m pip install Flask-MySQL
+python -m pip install numpy
+python -m pip install scipy
+python -m pip install gensim
+python -m pip install pybind11
+python -m pip install gunicorn
+python -m pip install Flask
 ```
 
-8. Install gunicorn
-```
-pip install gunicorn
-```
-
-9. Install nginx
+9. Install the nginx WebServer software
 ```
 sudo apt install nginx
 ```
@@ -111,17 +104,13 @@ sudo service nginx start
 
 11. Configure nginx to act as a Reverse-Proxy
 
-..* Install the vim text editor
-
-sudo apt install vim
-
-..* Open the nginx config file in vim
+..1. Open the nginx config file in vim
 ```
 sudo vim /etc/nginx/nginx.conf
 ```
-..* Press 'i' in order to access the insertion mode
+..2. Press 'i' in order to access the insertion mode
 
-..* Replace its content with:
+..3. Replace its content with:
 
 ```
 worker_processes 1;
@@ -143,7 +132,8 @@ http{
 			# set the X-Real-IP to the client IP (sender)
 			proxy_set_header X-Real-IP $remote_addr;
 
-			# increase the timeout restrictions ( you might want to increase those numbers [seconds] for testing)
+			# increase the timeout restrictions ( you might want to increase those numbers
+			# denoting time [in seconds] for testing)
 			proxy_connect_timeout 3600;
 			proxy_send_timeout 3600;
 			proxy_read_timeout 3600;
@@ -158,12 +148,7 @@ http{
 sudo service nginx restart
 ```
 
-13. Install Flask
-```
-pip install Flask
-```
-
-14. Start the application main file (containing Flask application information) bound on 127.0.0.1 with port 5000, a timeout of 3600 seconds
+14. Start the application main file (containing Flask application information) bound (-b) on 127.0.0.1 and port 5000, a timeout (-t) of 3600 seconds
 ['wsgi.py' is the server-file and 'app' the application object's name in the server-file]
 ```
 gunicorn -b 127.0.0.1:5000 -t 3600 wsgi:app

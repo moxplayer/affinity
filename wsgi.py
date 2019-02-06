@@ -1,5 +1,8 @@
 import sys
-sys.path.append('/home/tobias/affinity/ServerFeatures')
+# add some paths
+sys.path.append('ServerFeatures')
+sys.path.append('ServerFeatures/WordEmbedding')
+sys.path.append('ServerFeatures/Processing/wmd/python-emd-master')
 
 from servermain import app
 

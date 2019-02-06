@@ -10,9 +10,8 @@ from utilities import safe_normalize
 sys.path.append('./ServerFeatures/util')
 from utilities import write_log
 
-#this library NEEDS to be installed from the incremental fastText version!
-#go to Repository folder ./fastText and run "pip install ."
-import fastText
+#sys.path.append('./ServerFeatures/WordEmbedding/fastText')
+#import fastText
 
 pickle_directory     = './ServerFeatures/Userdata/pickle_files/'
 reference_model_path = './ServerFeatures/Wordembedding/reference_model.bin'
