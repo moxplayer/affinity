@@ -275,7 +275,7 @@ def fetchUserDetail():
 # 1. if <useforretrain> == True : re-train the <reference_model>, with the input document (*.TXT) by <userid>                   ## only use the useforretrain carefully!
 # 2. create Bag-of-words for the chatHistory													[status ('1')/('4') --> '5']
 # 3. populate the DB with the Bag-of-words 
-# 4. create TFIDF values															[status    ('5')    --> '6']
+# 4. create TFIDF values																		[status    ('5')    --> '6']
 # 5. populate/update the DB with TFIDF values													[status    ('6')    --> '7']
 # 6. fetch the most important terms for <userid> and their (truncated) Bag-of-Words; truncated because not all wors are being considered here	
 # 7. pickle the most important terms for <userid> and their word_vectors into an individual pickle file for future unpickling and comparison	[status    ('7')    --> '8']
@@ -287,7 +287,10 @@ def fetchUserDetail():
 # if crossvalidate = True, the BoWHistory TABLE will not be updated! --> the user is invisibile to the ecosystem
 
 def processPipeline(app, userid, chatHistoryPath, useforretrain, useNormalization = False, crossvalidate = False):
-	reference_model_path = './ServerFeatures/Wordembedding/reference_model.bin'
+	reference_model_path = './ServerFeatures/WordEmbedding/reference_model.bin'
+	reference_file_dir   = './ServerFeatures/Userdata/Reference_User_Histories'
+	model_output_name	 = './ServerFeatures/WordEmbedding/reference_model'
+	
 	referenceModelExists = False
 	########
 	# 0. Check if a reference model exists
@@ -299,7 +302,7 @@ def processPipeline(app, userid, chatHistoryPath, useforretrain, useNormalizatio
 	# if not, train a reference model
 	else:
 		print('No reference model has been found. Start training a reference model upon the reference chatHistories.')
-		trainWEforallfiles(min_bytes = 1000)
+		trainWEforallfiles(reference_file_dir, model_output_name, min_bytes = 1000)
 		
 
 	##########

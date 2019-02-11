@@ -7,7 +7,7 @@ import os, sys, subprocess
 # [output_name] : name of the output word embedding
 # [min_bytes]   : min number of bytes under which a txt files is not considered in the training corpus
 # 
-def trainWEforallfiles(rootdir, output_name, min_bytes = 1000, fasttext= "fastText/fasttext"):
+def trainWEforallfiles(rootdir, output_name, min_bytes = 1000, fasttext= "./ServerFeatures/WordEmbedding/fastText/fasttext"):
     # set name for temporary corpus
     temp_corpus_name       = rootdir + '/tempcorpus'
     # set fasttext parameters

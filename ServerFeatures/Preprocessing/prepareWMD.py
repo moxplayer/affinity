@@ -1,5 +1,5 @@
 import gensim, pdb, sys, scipy.io as io, numpy as np, pickle, string
-from gensim.models import FastText
+#from gensim.models import FastText
 sys.path.append('./ServerFeatures/Usermanagement')
 from dbdetails import createUserDetail, populateBoWReferenceCorpus, populateUsersBoW, fetchdistinctUsercount, fetchDocumentcount, fetchUserBoW, fetchUserName, checkValidUser, fetchProcessStatus,\
 	fetchTimestamp, updateTFIDF, fetchTopNtfidf, updateProcessStatus, updateMessageTimestamp, updateFBEmailid
@@ -10,11 +10,11 @@ from utilities import safe_normalize
 sys.path.append('./ServerFeatures/util')
 from utilities import write_log
 
-#sys.path.append('./ServerFeatures/WordEmbedding/fastText')
-#import fastText
+sys.path.append('./ServerFeatures/WordEmbedding/fastText')
+import fastText
 
 pickle_directory     = './ServerFeatures/Userdata/pickle_files/'
-reference_model_path = './ServerFeatures/Wordembedding/reference_model.bin'
+reference_model_path = './ServerFeatures/WordEmbedding/reference_model.bin'
 
 
 # pickle the transposed truncated word vectors, and the truncated bag-of-words by <userid> for comparison via the WMD
