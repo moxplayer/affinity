@@ -183,7 +183,7 @@ def processReferenceUserCreationRequest():
 				referenceuserid = fetchUserId(app, reference_username)
 			print("Userid for the reference file " + file_ + " is: " + referenceuserid)
 			# start the process pipeline if the file is a .txt file and has at least <min_bytes> bytes				
-			tooShort = os.path.getsize(os.path.join(root, file_)) < min_bytes
+			tooShort = os.path.getsize(reference_file_path) < min_bytes
 			isTxt    = file_.endswith(".txt")
 			if not tooShort and isTxt:
 				processPipeline(app, referenceuserid, reference_file_path, useforretrain)
