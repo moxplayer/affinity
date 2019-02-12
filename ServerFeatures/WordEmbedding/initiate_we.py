@@ -61,7 +61,7 @@ def trainWEwithuserfile(chatHistoryPath):
     # else train a reference_model on the input text
     else:
         print("No reference model found. Train on ")
-        subprocess.call(['./ServerFeatures/Wordembedding/fastText/fasttext', 'skipgram','-input', chatHistoryPath , '-minCount' , minCount , '-output', reference_we_name])
+        subprocess.call(['./ServerFeatures/WordEmbedding/fastText/fasttext', 'skipgram','-input', chatHistoryPath , '-minCount' , minCount , '-output', reference_we_name])
         
         
     print("Fasttext is trained with file ", chatHistoryPath)
