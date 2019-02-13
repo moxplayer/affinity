@@ -5,18 +5,18 @@ from subprocess import call
 import sys
 
 sys.path.append('./ServerFeatures/util')
-from utilities import write_log, split_text
+from utilities import write_log, split_text, safe_normalize_vec
 
 sys.path.append('./ServerFeatures/Dataextraction')
 from fetchFBdetails import fetchFBInformation
 
 sys.path.append('./ServerFeatures/Preprocessing')
 from userTFIDFgeneration import generateTFIDF
-from prepareWMD import createPickle
+from prepareWMD import createPickle, pickle_directory
 from userBoWgeneration import generateUserBoW
 
 sys.path.append('./ServerFeatures/Processing/wmd')
-from wmd_adapted import cosine_distance, euclidean_distance, calc_similarity                                            
+from wmd_adapted import cosine_distance, euclidean_distance, calc_similarity, load_pickle                                        
 
 sys.path.append('./ServerFeatures/Usermanagement')
 from dbdetails import createUserDetail, populateBoWReferenceCorpus, populateUsersBoW, fetchdistinctUsercount, fetchDocumentcount, fetchUserBoW, fetchUserName, checkValidUser, fetchProcessStatus, fetchTimestamp, updateTFIDF, fetchUserId, fetchTopNtfidf, updateProcessStatus, updateMessageTimestamp, updateFBEmailid
@@ -405,22 +405,64 @@ def compareUserDetails():
 		clientdetails = request.get_json(force=True)
 		userid1       = clientdetails['userid1']
 		userid2       = clientdetails['userid2']
-		# use_cosine : True, else euclidean
+
+		# set signature size (max. number of words to use per user)
+		sig_size = 50
+		
+		# use_cosine : True <-> use cosine_distance; else euclidean_distance
 		use_cosine    = True
+		if use_cosine:
+			dist = cosine_distance
+			cosine_adjustment = True
+		else:
+			dist = euclidean_distance
+			cosine_adjustment = False
 		# 
 		#normalize    = False
+		
 		returndata    = {}
 		print("Compare similarity between userid ", userid1, " and ", userid2)
-		distance  = calc_similarity(app, userid1, userid2, use_cosine)
+		
+		# fetch the signatures of userid1 and userid2
+		pickle_path1 = os.path.join(pickle_directory, "pickle_output_" + str(userid1) + ".pk")
+		pickle_path2 = os.path.join(pickle_directory, "pickle_output_" + str(userid2) + ".pk")
+		signature1 = load_pickle(pickle_path1)
+		signature2 = load_pickle(pickle_path2)
+		
+		# transpose the word vectors (embedding_dim x word_vectors --> word_vectors x embedding_dim)
+		signature1[0] = signature1[0].T
+		signature2[0] = signature2[0].T
+		
+		# cast numpy.ndarray to list
+		signature1 = [el.tolist() for el in signature1]
+		signature2 = [el.tolist() for el in signature2]
+		
+		# truncate to signature_size word:eight pairs
+		signature1 = [el[:sig_size] for el in signature1]
+		signature2 = [el[:sig_size] for el in signature2]
+
+		# make weights floats
+		signature1[1] = safe_normalize_vec(signature2[1])
+		signature2[1] = safe_normalize_vec(signature2[1])
+		
+		# assemble comparisonpair
+		comparisonpair = [signature1, signature2]
+		
+		# calculate their distance
+		similarity  = calc_similarity(comparisonpair, distance = dist, cosine_adjustment = cosine_adjustment)
+		
 		username1 = fetchUserName(app, userid1)
 		username2 = fetchUserName(app, userid2)
-		print("Distance between ", username1, " and ", username2, " is:", distance)
+		print("Similarity between ", username1, " and ", username2, " is:", similarity)
 		returndata['userid1']    = userid1
 		returndata['userid2']    = userid2
 		returndata['username1']  = username1
 		returndata['username2']  = username2
-		returndata['similarity'] = distance*100
+		returndata['similarity'] = similarity*100
 		return(json.dumps(returndata))
+	
+
+	
 	
 ### FOR TESTING ONLY!!!
 # calculate the pairwise  distances between a list of userids
