@@ -426,24 +426,10 @@ def compareUserDetails():
 		# fetch the signatures of userid1 and userid2
 		pickle_path1 = os.path.join(pickle_directory, "pickle_output_" + str(userid1) + ".pk")
 		pickle_path2 = os.path.join(pickle_directory, "pickle_output_" + str(userid2) + ".pk")
-		signature1 = load_pickle(pickle_path1)
-		signature2 = load_pickle(pickle_path2)
 		
-		# transpose the word vectors (embedding_dim x word_vectors --> word_vectors x embedding_dim)
-		signature1[0] = signature1[0].T
-		signature2[0] = signature2[0].T
-		
-		# cast numpy.ndarray to list
-		signature1 = [el.tolist() for el in signature1]
-		signature2 = [el.tolist() for el in signature2]
-		
-		# truncate to signature_size word:eight pairs
-		signature1 = [el[:sig_size] for el in signature1]
-		signature2 = [el[:sig_size] for el in signature2]
-
-		# make weights floats
-		signature1[1] = safe_normalize_vec(signature2[1])
-		signature2[1] = safe_normalize_vec(signature2[1])
+		# make signatures
+		signature1 = pickle_to_signature(pickle_path1, sig_size)
+		signature2 = pickle_to_signature(pickle_path2, sig_size)
 		
 		# assemble comparisonpair
 		comparisonpair = [signature1, signature2]
@@ -460,30 +446,50 @@ def compareUserDetails():
 		returndata['username2']  = username2
 		returndata['similarity'] = similarity*100
 		return(json.dumps(returndata))
-	
 
+# load a pickle file from pickle_path, and create a signature (word_vectors, word_tokens) with signature size : sig_size
+def pickle_to_signature(pickle_path, sig_size):
+	# load pickle
+	signature = load_pickle(pickle_path)
 	
+	# transpose the word vectors (embedding_dim x word_vectors --> word_vectors x embedding_dim)
+	signature[0] = signature[0].T
+			
+	# cast numpy.ndarray to list
+	signature = [el.tolist() for el in signature]
+			
+	# truncate to signature_size word:eight pairs
+	signature = [el[:sig_size] for el in signature]
 	
-### FOR TESTING ONLY!!!
+	# make weights floats
+	signature[1] = safe_normalize_vec(signature[1])
+	
+	return signature
+	
+### FOR TESTING ONLY!!! NOT FOR PRODUCTION!!!
 # calculate the pairwise  distances between a list of userids
 # export is a (Gephi) edge graph
 # requires : [userids] , comma-separated userids
 # format : "1,2,3": WRONG: "1, 2, 3"
 @app.route('/pairwisedist', methods=['POST'])
 def calcPairwiseDist():
-
-	# use cosine
-	use_cosine = True
-
+	# set signature size (max. number of words to use per user)
+	sig_size = 50
+	# use_cosine : True <-> use cosine_distance; else euclidean_distance
+	use_cosine    = True
+	if use_cosine:
+		dist = cosine_distance
+		cosine_adjustment = True
+	else:
+		dist = euclidean_distance
+		cosine_adjustment = False
+	
+	
 	# export as gephi edge graph file
 	as_gephi = True
 
 	if request.method == 'POST':
 		from collections import namedtuple
-		sys.path.append('./ServerFeatures/Processing/wmd/python-emd-master')
-		from emd import emd
-		from math import sqrt
-		from utilities import cosine_distance, euclidean_distance
 		#1. insert a couple of userids
 		data    = request.get_json(force=True)
 		userids = data['userids']
@@ -501,7 +507,19 @@ def calcPairwiseDist():
 		#3. For all pairs run emd
 		similarities = []
 		for userid1, userid2 in id_pairs:
-			similarities.append(calc_similarity(app, userid1, userid2, use_cosine))
+			# fetch the signatures of userid1 and userid2
+			pickle_path1 = os.path.join(pickle_directory, "pickle_output_" + str(userid1) + ".pk")
+			pickle_path2 = os.path.join(pickle_directory, "pickle_output_" + str(userid2) + ".pk")
+		
+			# make signatures
+			signature1 = pickle_to_signature(pickle_path1, sig_size)
+			signature2 = pickle_to_signature(pickle_path2, sig_size)
+		
+			# assemble comparisonpair
+			comparisonpair = [signature1, signature2]
+		
+			# calculate their distance and append to similarities list
+			similarities.append(calc_similarity(comparisonpair, distance = dist, cosine_adjustment = cosine_adjustment))
 
 		# convert to gephi edge-graph format
 		if as_gephi:
@@ -513,10 +531,10 @@ def calcPairwiseDist():
 			result = str(list(zip(id_pairs, similarities)))[1:-1]
 
 		# define a timesting (hour_minute_second) in order to specify the time the sim_file has been generated
-		time_string = datetime.now().strptime("%Y_%m_%d_%H_%M_%S")
+		time_string = datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 		with open(time_string+'_sims.csv', mode = 'w') as f:
 			f.write(result)
-			print('Wrote a file with pairwise similarities')
+			print('Wrote a file with pairwise similarities to {}'.format(time_string+'_sims.csv'))
 		return(json.dumps(result))
 
 
