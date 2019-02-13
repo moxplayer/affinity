@@ -360,7 +360,7 @@ def processPipeline(app, userid, chatHistoryPath, useforretrain, useNormalizatio
 
 
 	# if the process status states that the BoWs have been generated populate the DB
-	if processstatus == "6": 
+	if (processstatus == "6") | (processstatus == "7"): 
 		TFIDFgenerated = "1"
 	else:
 		TFIDFgenerated = "0"
@@ -390,6 +390,7 @@ def processPipeline(app, userid, chatHistoryPath, useforretrain, useNormalizatio
 			# picklefilegenerated  "1" : Successfully generated pickle files of (??)
 			#                     "-1" : Error while pickling
 			picklefilegenerated = createPickle(app, userid, truncated_featurenames, truncated_occurrences, embedding_dimension, useNormalization)
+			
 
 	return(jsonify(userid))
 
