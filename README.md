@@ -19,7 +19,7 @@ The data sets used in the paper can be downloaded [here](https://dataverse.harva
 
 
 **We have tested the soundnedd of the *affinity* prototype on an Ubuntu 16.04 virtual machine using Python2 (simply *python* in the below).**
-**Support for Python3 is not there - string/byte encoding will arise in combination with database interactions.**
+**Support for Python3 is not there - please use Python2**
 
 0. Preliminaries
 
@@ -229,24 +229,40 @@ SHOW TABLE STATUS;
 \q
 ```
 
+## Download data set (US115thcongress.tar.gz) from https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/NMT4HP
 
+26. Decompress dataset
+```
+tar -zxvf US115thcongress.tar.gz
+```
 
-## Download data sets
+## Download NUS SMS Corpus
+```
+wget https://github.com/kite1988/nus-sms-corpus/raw/master/smsCorpus_en_xml_2015.03.09_all.zip
+unzip smsCorpus_en_xml_2015.03.09_all.zip
+mv smsCorpus_en_2015.03.09_all.xml ServerFeatures/Userdata/Reference_User_Histories
+```
 
+## Register reference Users from the NUS SMS Corpus via
+Note that in case that no reference model has been trained, the NUS SMS Corpus is used to build a temporary corpus as a concatenation
+of its individual users' .txt files that contain more than 1000bytes. This threshold is more or less arbitrary to disregard user histories
+with very little textual information. After the registration process, we have [] reference users registered with their individual word usage 
+statistics saved in a MySQL database.
+```
+curl -X POST -H "Content-type:application/json" -d '{"path":"./ServerFeatures/Userdata/Reference_User_Histories/smsCorpus_en_2015.03.09_all.xml", "useforretrain":"False"}' http://127.0.0.1:5000/createreferenceuser
+```
 
+## Register the senators of the 115th US Congress
+```
+python register_all_senators.py
+```
 
+## Calculate similarity between two registered users
+```
+curl -X POST -H "Content-type:application/json" -d '{"userid1":"<some_registered_id1>", "userid2":"<some_registered_id2"}' http://127.0.0.1:5000/comparedetails
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Calculate pairwise similarities registered users and save the results as gephi edge graph (.csv)
+```
+curl -X POST -H "Content-type:application/json" -d '{"userids":"<comma_separated_userids_without_blanks"}' http://127.0.0.1:5000/pairwisedist
+```
